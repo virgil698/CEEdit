@@ -7,7 +7,6 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ProjectPage">
     <Grid Background="White">
-        <!-- 项目页面布局 -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -15,30 +14,35 @@
 
         <!-- 上部菜单 -->
         <StackPanel Orientation="Horizontal" Margin="20">
-            <TextBox Width="200" Height="39" Margin="0,0,10,0" Text="搜索项目..." Foreground="#FF999999" 
-                     Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
-                <TextBox.Style>
-                    <Style TargetType="TextBox">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TextBox">
-                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
-                                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter Property="Text" Value=""/>
-                                <Setter Property="BorderBrush" Value="#FF4A90E2"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
-            <Button Content="创建项目" Width="120" Height="39" Margin="0,0,10,0" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="CreateProjectButton_Click">
+            <!-- 搜索区域 -->
+            <Border BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="4" Background="White">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- 搜索按钮 -->
+                    <Button Width="39" Height="39" Background="White" BorderThickness="0" Cursor="Hand">
+                        <Image Source="pack://application:,,,/resources/search.ico" Width="25" Height="25"/>
+                    </Button>
+                    <!-- 搜索框 -->
+                    <TextBox x:Name="SearchTextBox" Width="161" Height="39" BorderThickness="0"
+                             Background="Transparent" Padding="0" FontSize="14" VerticalContentAlignment="Center">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="Foreground" Value="#FF999999"/>
+                                <Setter Property="Text" Value="搜索项目..."/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Text" Value=""/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                </StackPanel>
+            </Border>
+
+            <Button Content="创建项目" Width="120" Height="39" Margin="10,0" Background="#FF4A90E2"
+                    Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold"
+                    Click="CreateProjectButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -61,7 +65,9 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="打开" Width="80" Height="39" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="OpenProjectButton_Click">
+
+            <Button Content="打开" Width="80" Height="39" Background="#FF4A90E2" Foreground="White"
+                    BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="OpenProjectButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -90,7 +96,8 @@
         <ListBox Grid.Row="1" Margin="20" Background="Transparent">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="ItemBorder" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="0,0,0,1" Padding="10">
+                    <Border x:Name="ItemBorder" Background="White" BorderBrush="#FFE0E0E0"
+                            BorderThickness="0,0,0,1" Padding="10">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="resources/logo.ico" Width="40" Height="40" Margin="0,0,15,0"/>
                             <StackPanel>

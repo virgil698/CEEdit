@@ -9,13 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="resources\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="resources\logo.ico" />
+      <None Remove="resources\search.ico" />
       <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
       <Resource Include="resources\logo.ico" />
+      <Resource Include="resources\search.ico">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
 </Project>
