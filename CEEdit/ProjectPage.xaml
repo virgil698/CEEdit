@@ -61,7 +61,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="打开" Width="80" Height="39" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
+            <Button Content="打开" Width="80" Height="39" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="OpenProjectButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
