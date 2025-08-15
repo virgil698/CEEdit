@@ -15,7 +15,7 @@
 
         <!-- 上部菜单 -->
         <StackPanel Orientation="Horizontal" Margin="20">
-            <TextBox Width="200" Height="38" Margin="0,0,10,0" Text="搜索项目..." Foreground="#FF999999" 
+            <TextBox Width="200" Height="39" Margin="0,0,10,0" Text="搜索项目..." Foreground="#FF999999" 
                      Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Style>
                     <Style TargetType="TextBox">
@@ -38,7 +38,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <Button Content="创建项目" Width="120" Height="38" Margin="0,0,10,0" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="CreateProjectButton_Click">
+            <Button Content="创建项目" Width="120" Height="39" Margin="0,0,10,0" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="CreateProjectButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -61,7 +61,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="打开" Width="80" Height="38" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
+            <Button Content="打开" Width="80" Height="39" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">

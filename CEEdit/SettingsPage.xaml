@@ -52,7 +52,7 @@
         <!-- 第二行：项目文件夹设置 -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
             <TextBlock Text="项目文件夹：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
-            <TextBox Width="300" Height="36" Text="C:\CEEdit\project" IsReadOnly="True" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
+            <TextBox Width="300" Height="39" Text="C:\CEEdit\project" IsReadOnly="True" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
                         <Setter Property="Template">
@@ -77,7 +77,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <Button Content="更改位置" Width="100" Height="36" Margin="10,0,0,0" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
+            <Button Content="更改位置" Width="100" Height="39" Margin="10,0,0,0" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
                 <Button.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -110,7 +110,7 @@
         <!-- 第三行：转换文件夹设置 -->
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <TextBlock Text="转换文件夹：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
-            <TextBox Width="300" Height="36" Text="C:\CEEdit\conversion" IsReadOnly="True" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
+            <TextBox Width="300" Height="39" Text="C:\CEEdit\conversion" IsReadOnly="True" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
                         <Setter Property="Template">
@@ -135,7 +135,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <Button Content="更改位置" Width="100" Height="36" Margin="10,0,0,0" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
+            <Button Content="更改位置" Width="100" Height="39" Margin="10,0,0,0" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
                 <Button.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Template">

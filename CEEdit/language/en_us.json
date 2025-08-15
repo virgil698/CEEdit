@@ -1,0 +1,7 @@
+{
+  "MainWindow.Title": "Welcome to CEEditor",
+  "MainWindow.Version": "v0.0.1",
+  "MainWindow.Menu.Project": "Project",
+  "MainWindow.Menu.Conversion": "Conversion",
+  "MainWindow.Menu.Settings": "Settings"
+}

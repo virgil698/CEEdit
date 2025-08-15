@@ -18,7 +18,7 @@
         <!-- 第一行：项目名 -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
             <TextBlock Text="项目名：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
-            <TextBox Width="300" Height="36" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
+            <TextBox Width="300" Height="39" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
                         <Setter Property="Template">
@@ -48,7 +48,7 @@
         <!-- 第二行：项目描述 -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
             <TextBlock Text="项目描述：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
-            <TextBox Width="300" Height="36" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
+            <TextBox Width="300" Height="39" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
                         <Setter Property="Template">
@@ -78,7 +78,7 @@
         <!-- 第三行：项目作者 -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,20">
             <TextBlock Text="项目作者：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
-            <TextBox Width="300" Height="36" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
+            <TextBox Width="300" Height="39" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
                         <Setter Property="Template">

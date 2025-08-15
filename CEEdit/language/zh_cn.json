@@ -1,0 +1,7 @@
+{
+  "MainWindow.Title": "欢迎访问 CEEditor",
+  "MainWindow.Version": "v0.0.1",
+  "MainWindow.Menu.Project": "项目",
+  "MainWindow.Menu.Conversion": "转换",
+  "MainWindow.Menu.Settings": "设置"
+}
