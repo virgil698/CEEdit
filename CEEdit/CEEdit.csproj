@@ -6,11 +6,16 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
+        <ApplicationIcon>resources\exe.ico</ApplicationIcon>
+        <BaseOutputPath>E:\BlockBridge\CEEdit\CEEdit\build</BaseOutputPath>
+        <Copyright>https://github.com/virgil698/CEEdit/</Copyright>
+        <PackageProjectUrl></PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
       <None Remove="resources\logo.ico" />
       <None Remove="resources\search.ico" />
+      <Content Include="resources\exe.ico" />
       <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
       <Resource Include="resources\logo.ico" />
       <Resource Include="resources\search.ico">
