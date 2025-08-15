@@ -22,7 +22,7 @@
                         <Image Source="pack://application:,,,/resources/search.ico" Width="25" Height="25"/>
                     </Button>
                     <!-- 搜索框 -->
-                    <TextBox x:Name="SearchTextBox" Width="161" Height="39" BorderThickness="0"
+                    <TextBox x:Name="SearchTextBox" Width="300" Height="39" BorderThickness="0"
                              Background="Transparent" Padding="0" FontSize="14" VerticalContentAlignment="Center">
                         <TextBox.Style>
                             <Style TargetType="TextBox">
@@ -93,7 +93,7 @@
         </StackPanel>
 
         <!-- 下部项目列表 -->
-        <ListBox Grid.Row="1" Margin="20" Background="Transparent">
+        <ListBox Grid.Row="1" Margin="20" Background="Transparent" BorderThickness="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border x:Name="ItemBorder" Background="White" BorderBrush="#FFE0E0E0"

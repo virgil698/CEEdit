@@ -16,7 +16,7 @@
         <!-- 第一行：选择包文件夹 -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
             <TextBlock Text="要转换的配置文件夹：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF525252" FontSize="14"/>
-            <TextBox x:Name="PathTextBox" Width="300" Height="39" Text="待选择" IsReadOnly="True" 
+            <TextBox x:Name="PathTextBox" Width="350" Height="39" Text="待选择" IsReadOnly="True" 
                      Background="#FFFFFFFF" BorderBrush="#FFE0E0E0" BorderThickness="1" 
                      Padding="10" FontSize="14"/>
             <Button Content="选择路径" Width="100" Height="38" Margin="10,0,0,0"
@@ -56,7 +56,7 @@
         </StackPanel>
 
         <!-- 右下角按钮 -->
-        <Button Content="开始转换" Width="120" Height="36" HorizontalAlignment="Right" Grid.Row="2" Margin="0,0,20,20"
+        <Button Content="开始转换" Width="120" Height="36" HorizontalAlignment="Right" Grid.Row="2" Margin="0,0,25,-300"
                 Background="#FF4A90E2" Foreground="White" BorderThickness="0" 
                 FontSize="14" FontWeight="SemiBold">
             <Button.Style>

@@ -16,7 +16,7 @@
         <!-- 第一行：语言设置 -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
             <TextBlock Text="语言：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
-            <ComboBox Width="200" Height="36" SelectedIndex="0" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
+            <ComboBox Width="200" Height="39" SelectedIndex="0" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <ComboBoxItem>简体中文</ComboBoxItem>
                 <ComboBoxItem>繁体中文</ComboBoxItem>
                 <ComboBoxItem>English</ComboBoxItem>
