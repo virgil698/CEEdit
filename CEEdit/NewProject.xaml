@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
-        Title="创建新项目" Height="450" Width="800"
+        Title="{Binding WindowTitle}" Height="450" Width="800"
         Icon="resources/logo.ico">
     <Grid Background="White" Margin="20">
         <Grid.RowDefinitions>
@@ -17,7 +17,7 @@
 
         <!-- 第一行：项目名 -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="项目名：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
+            <TextBlock Text="{Binding LabelProjectName}" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
             <TextBox Width="300" Height="39" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
@@ -47,7 +47,7 @@
 
         <!-- 第二行：项目描述 -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="项目描述：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
+            <TextBlock Text="{Binding LabelProjectDescription}" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
             <TextBox Width="300" Height="39" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
@@ -77,7 +77,7 @@
 
         <!-- 第三行：项目作者 -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="项目作者：" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
+            <TextBlock Text="{Binding LabelProjectAuthor}" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#FF333333" FontWeight="SemiBold" FontSize="14" Width="120"/>
             <TextBox Width="300" Height="39" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" FontSize="14">
                 <TextBox.Resources>
                     <Style TargetType="TextBox">
@@ -107,7 +107,7 @@
 
         <!-- 第四行：是否启用项目 -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="是否启用：" VerticalAlignment="Center"
+            <TextBlock Text="{Binding LabelIsEnabled}" VerticalAlignment="Center"
                Foreground="#FF333333" FontWeight="SemiBold"
                FontSize="14" Width="120"/>
 
@@ -116,7 +116,7 @@
                 <!-- False -->
                 <RadioButton x:Name="rbFalse"
                      GroupName="EnableState"
-                     Content="False"
+                     Content="{Binding ValueFalse}"
                      Width="100" Height="36"
                      VerticalContentAlignment="Center"
                      HorizontalContentAlignment="Center"
@@ -151,7 +151,7 @@
                 <!-- True -->
                 <RadioButton x:Name="rbTrue"
                      GroupName="EnableState"
-                     Content="True"
+                     Content="{Binding ValueTrue}"
                      Width="100" Height="36"
                      VerticalContentAlignment="Center"
                      HorizontalContentAlignment="Center"
@@ -186,7 +186,7 @@
 
         <!-- 底部按钮 -->
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,105,0,0">
-            <Button Content="取消" Width="100" Height="36" Margin="0,0,10,0" Background="#FF999999" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="CancelButton_Click">
+            <Button Content="{Binding ButtonCancel}" Width="100" Height="36" Margin="0,0,10,0" Background="#FF999999" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="CancelButton_Click">
                 <Button.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -214,7 +214,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="创建项目" Width="100" Height="36" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
+            <Button Content="{Binding ButtonCreate}" Width="100" Height="36" Background="#FF4A90E2" Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold">
                 <Button.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Template">

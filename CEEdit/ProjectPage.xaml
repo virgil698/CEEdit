@@ -23,14 +23,25 @@
                     </Button>
                     <!-- 搜索框 -->
                     <TextBox x:Name="SearchTextBox" Width="300" Height="39" BorderThickness="0"
-                             Background="Transparent" Padding="0" FontSize="14" VerticalContentAlignment="Center">
+                             Background="Transparent" Padding="0" FontSize="14" VerticalContentAlignment="Center"
+                             Tag="{Binding SearchPlaceholder}">
                         <TextBox.Style>
                             <Style TargetType="TextBox">
                                 <Setter Property="Foreground" Value="#FF999999"/>
-                                <Setter Property="Text" Value="搜索项目..."/>
                                 <Style.Triggers>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <VisualBrush AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                                    <VisualBrush.Visual>
+                                                        <Label Content="{Binding RelativeSource={RelativeSource AncestorType=TextBox}, Path=Tag}" 
+                                                               Foreground="#FF999999" FontSize="14"/>
+                                                    </VisualBrush.Visual>
+                                                </VisualBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
                                     <Trigger Property="IsKeyboardFocused" Value="True">
-                                        <Setter Property="Text" Value=""/>
                                         <Setter Property="Foreground" Value="Black"/>
                                     </Trigger>
                                 </Style.Triggers>
@@ -40,7 +51,7 @@
                 </StackPanel>
             </Border>
 
-            <Button Content="创建项目" Width="120" Height="39" Margin="10,0" Background="#FF4A90E2"
+            <Button Content="{Binding ButtonCreateProject}" Width="120" Height="39" Margin="10,0" Background="#FF4A90E2"
                     Foreground="White" BorderThickness="0" FontSize="14" FontWeight="SemiBold"
                     Click="CreateProjectButton_Click">
                 <Button.Style>
@@ -66,7 +77,7 @@
                 </Button.Style>
             </Button>
 
-            <Button Content="打开" Width="80" Height="39" Background="#FF4A90E2" Foreground="White"
+            <Button Content="{Binding ButtonOpen}" Width="80" Height="39" Background="#FF4A90E2" Foreground="White"
                     BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="OpenProjectButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">

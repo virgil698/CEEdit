@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         xmlns:local="clr-namespace:CEEdit"
-        Title="欢迎访问 CEEditor" Height="600" Width="1024"
+        Title="{Binding WindowTitle}" Height="600" Width="1024"
         Icon="resources/logo.ico">
     <Grid>
         <!-- 主网格布局，分为左右两个部分 -->
@@ -24,12 +24,12 @@
                 <Image Source="resources\logo.ico" Width="40" Height="40"/>
                 <StackPanel Margin="10,0,0,0">
                     <TextBlock Text="CEEditor" Foreground="White" FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="v0.0.1" Foreground="Gray" FontSize="12"/>
+                    <TextBlock Text="{Binding Version}" Foreground="Gray" FontSize="12"/>
                 </StackPanel>
             </StackPanel>
 
             <!-- 菜单项 -->
-            <Button Content="项目" Width="180" Height="50" Margin="10,0,0,0" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0,0,0" Click="ProjectButton_Click">
+            <Button Content="{Binding MenuProject}" Width="180" Height="50" Margin="10,0,0,0" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0,0,0" Click="ProjectButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -52,7 +52,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="转换" Width="180" Height="50" Margin="10,0,0,0" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0,0,0" Click="ConversionButton_Click">
+            <Button Content="{Binding MenuConversion}" Width="180" Height="50" Margin="10,0,0,0" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0,0,0" Click="ConversionButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -75,7 +75,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="设置" Width="180" Height="50" Margin="10,0,0,0" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0,0,0" Click="SettingsButton_Click">
+            <Button Content="{Binding MenuSettings}" Width="180" Height="50" Margin="10,0,0,0" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0,0,0" Click="SettingsButton_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
