@@ -11,6 +11,8 @@ namespace CEEdit
     /// </summary>
     public partial class MainWindow : Window
     {
+        private LoadedProjectData? _loadedProjectData;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -21,6 +23,19 @@ namespace CEEdit
         {
             InitializeComponent();
             InitializeViewModel(projectService, historyService);
+        }
+
+        public MainWindow(LoadedProjectData? loadedProjectData)
+        {
+            InitializeComponent();
+            _loadedProjectData = loadedProjectData;
+            InitializeViewModel();
+            
+            // 如果有项目数据，加载项目
+            if (_loadedProjectData != null)
+            {
+                LoadProjectData(_loadedProjectData);
+            }
         }
 
         private void InitializeViewModel(IProjectService? projectService = null, IProjectHistoryService? historyService = null)
@@ -105,6 +120,57 @@ namespace CEEdit
                 DataContext is MainViewModel viewModel)
             {
                 viewModel.StatusMessage = $"当前编辑器: {tab.Header}";
+            }
+        }
+
+        /// <summary>
+        /// 加载项目数据到编辑器UI
+        /// </summary>
+        /// <param name="projectData">项目数据</param>
+        private void LoadProjectData(LoadedProjectData projectData)
+        {
+            try
+            {
+                // 更新窗口标题
+                Title = $"CEEdit - {projectData.Project.Name}";
+
+                System.Diagnostics.Debug.WriteLine("开始加载项目数据到编辑器...");
+                System.Diagnostics.Debug.WriteLine($"项目名称: {projectData.Project.Name}");
+                System.Diagnostics.Debug.WriteLine($"项目版本: {projectData.Project.Version}");
+                System.Diagnostics.Debug.WriteLine($"项目作者: {projectData.Project.Author}");
+                System.Diagnostics.Debug.WriteLine($"项目目录: {projectData.ProjectDirectory}");
+                
+                if (projectData.PackYml != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"pack.yml信息:");
+                    System.Diagnostics.Debug.WriteLine($"  - 作者: {projectData.PackYml.Author}");
+                    System.Diagnostics.Debug.WriteLine($"  - 版本: {projectData.PackYml.Version}");
+                    System.Diagnostics.Debug.WriteLine($"  - 描述: {projectData.PackYml.Description}");
+                    System.Diagnostics.Debug.WriteLine($"  - 命名空间: {projectData.PackYml.Namespace}");
+                    System.Diagnostics.Debug.WriteLine($"  - 启用状态: {projectData.PackYml.Enable}");
+                }
+
+                System.Diagnostics.Debug.WriteLine($"项目文件结构:");
+                System.Diagnostics.Debug.WriteLine($"  - 方块文件: {projectData.FileStructure.Blocks.Count}个");
+                System.Diagnostics.Debug.WriteLine($"  - 物品文件: {projectData.FileStructure.Items.Count}个");
+                System.Diagnostics.Debug.WriteLine($"  - 配方文件: {projectData.FileStructure.Recipes.Count}个");
+                System.Diagnostics.Debug.WriteLine($"  - 纹理文件: {projectData.FileStructure.Textures.Count}个");
+                System.Diagnostics.Debug.WriteLine($"  - 模型文件: {projectData.FileStructure.Models.Count}个");
+                System.Diagnostics.Debug.WriteLine($"  - 音效文件: {projectData.FileStructure.Sounds.Count}个");
+
+                // 将项目数据传递给MainViewModel
+                if (DataContext is MainViewModel mainViewModel)
+                {
+                    mainViewModel.LoadProject(projectData);
+                }
+
+                System.Diagnostics.Debug.WriteLine("项目数据加载完成，编辑器UI已准备就绪");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"加载项目数据失败: {ex.Message}");
+                MessageBox.Show($"加载项目数据失败: {ex.Message}", "错误", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

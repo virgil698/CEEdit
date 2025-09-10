@@ -1,0 +1,5 @@
+author: AdvancedDeveloper
+version: 2.0.0-beta
+description: Advanced mod with custom features
+namespace: advanced_mod
+enable: false

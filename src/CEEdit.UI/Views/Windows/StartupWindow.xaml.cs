@@ -48,8 +48,12 @@ namespace CEEdit.UI.Views.Windows
         {
             try
             {
-                // 创建并显示主窗口
-                var mainWindow = new MainWindow();
+                // 获取加载的项目数据
+                var startupViewModel = DataContext as StartupScreenViewModel;
+                var loadedProjectData = startupViewModel?.LoadedProjectData;
+
+                // 创建并显示主窗口，传递项目数据
+                var mainWindow = new MainWindow(loadedProjectData);
                 mainWindow.Show();
 
                 // 关闭启动窗口

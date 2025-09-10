@@ -13,13 +13,15 @@
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     <converters:SeverityToBrushConverter x:Key="SeverityToBrushConverter"/>
     
-    <!-- VSCode风格浅色主题 -->
+    <!-- 现代化统一主题 - 基于Material Design和VSCode风格 -->
     <SolidColorBrush x:Key="BackgroundBrush" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="#F8F8F8"/>
-    <SolidColorBrush x:Key="TertiaryBackgroundBrush" Color="#F3F3F3"/>
-    <SolidColorBrush x:Key="SurfaceBrush" Color="#FAFAFA"/>
-    <SolidColorBrush x:Key="ToolBarBrush" Color="#F8F8F8"/>
-    <SolidColorBrush x:Key="SideBarBrush" Color="#F5F5F5"/>
+    <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="#F8F9FA"/>
+    <SolidColorBrush x:Key="TertiaryBackgroundBrush" Color="#F1F3F4"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FAFBFC"/>
+    <SolidColorBrush x:Key="ToolBarBrush" Color="#F8F9FA"/>
+    <SolidColorBrush x:Key="SideBarBrush" Color="#F5F6F7"/>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="HoverBackgroundBrush" Color="#F5F6F7"/>
     
     <!-- 边框色系 -->
     <SolidColorBrush x:Key="BorderBrush" Color="#E1E4E8"/>
@@ -34,11 +36,13 @@
     <SolidColorBrush x:Key="InverseTextBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="HighlightTextBrush" Color="#FFFFFF"/>
     
-    <!-- 主题色系 -->
-    <SolidColorBrush x:Key="AccentBrush" Color="#0366D6"/>
-    <SolidColorBrush x:Key="AccentHoverBrush" Color="#0256CC"/>
-    <SolidColorBrush x:Key="AccentPressedBrush" Color="#024DB8"/>
-    <SolidColorBrush x:Key="AccentLightBrush" Color="#E1F5FE"/>
+    <!-- 现代化主题色系 -->
+    <SolidColorBrush x:Key="AccentBrush" Color="#1976D2"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#1565C0"/>
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#0D47A1"/>
+    <SolidColorBrush x:Key="AccentLightBrush" Color="#E3F2FD"/>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="#2196F3"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="#BBDEFB"/>
     
     <!-- 状态颜色 -->
     <SolidColorBrush x:Key="SuccessBrush" Color="#28A745"/>
@@ -56,20 +60,38 @@
     <SolidColorBrush x:Key="PressedBrush" Color="#E6F3FF"/>
     <SolidColorBrush x:Key="FocusBrush" Color="#CCE5FF"/>
     
-    <!-- 字体定义 -->
-    <FontFamily x:Key="DefaultFontFamily">Microsoft YaHei UI, Segoe UI, PingFang SC, Source Han Sans CN, sans-serif</FontFamily>
-    <FontFamily x:Key="CodeFontFamily">Consolas, 'Courier New', Source Code Pro, monospace</FontFamily>
+    <!-- 现代化字体系统 -->
+    <FontFamily x:Key="DefaultFontFamily">Segoe UI, Microsoft YaHei UI, 微软雅黑, -apple-system, BlinkMacSystemFont, sans-serif</FontFamily>
+    <FontFamily x:Key="CodeFontFamily">Consolas, 'SF Mono', Monaco, 'Courier New', Source Code Pro, monospace</FontFamily>
+    <FontFamily x:Key="IconFontFamily">Segoe UI Symbol, Material Icons</FontFamily>
+    <FontFamily x:Key="TitleFontFamily">Segoe UI, Microsoft YaHei UI, 微软雅黑, sans-serif</FontFamily>
     
-    <sys:Double x:Key="DefaultFontSize">14</sys:Double>
+    <!-- 字号层级系统 -->
+    <sys:Double x:Key="CaptionFontSize">10</sys:Double>
     <sys:Double x:Key="SmallFontSize">12</sys:Double>
+    <sys:Double x:Key="DefaultFontSize">14</sys:Double>
+    <sys:Double x:Key="BodyFontSize">13</sys:Double>
     <sys:Double x:Key="LargeFontSize">16</sys:Double>
     <sys:Double x:Key="HeaderFontSize">18</sys:Double>
     <sys:Double x:Key="TitleFontSize">24</sys:Double>
+    <sys:Double x:Key="DisplayFontSize">28</sys:Double>
     
-    <!-- 间距定义 -->
+    <!-- 标准间距系统 -->
+    <Thickness x:Key="XSmallMargin">2</Thickness>
     <Thickness x:Key="SmallMargin">4</Thickness>
     <Thickness x:Key="DefaultMargin">8</Thickness>
+    <Thickness x:Key="MediumMargin">12</Thickness>
     <Thickness x:Key="LargeMargin">16</Thickness>
+    <Thickness x:Key="XLargeMargin">20</Thickness>
+    <Thickness x:Key="ExtraLargeMargin">24</Thickness>
+    <Thickness x:Key="HugeMargin">32</Thickness>
+    
+    <!-- 圆角定义 -->
+    <CornerRadius x:Key="SmallCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="DefaultCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="MediumCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="LargeCornerRadius">12</CornerRadius>
+    <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
     
     <!-- 现代按钮样式 -->
     <Style x:Key="ModernButtonStyle" TargetType="Button">

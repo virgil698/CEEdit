@@ -57,6 +57,9 @@ namespace CEEdit.UI.ViewModels
         [ObservableProperty]
         private bool _hasRecentProjects = false;
 
+        // 当前加载的项目数据
+        private LoadedProjectData? _loadedProjectData;
+
         public string WindowTitle => IsProjectOpen 
             ? $"{CurrentProjectName} - CEEdit" 
             : "CEEdit - CraftEngine插件可视化编辑器";
@@ -867,5 +870,68 @@ namespace CEEdit.UI.ViewModels
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        #region 项目加载
+
+        /// <summary>
+        /// 加载项目数据
+        /// </summary>
+        /// <param name="projectData">项目数据</param>
+        public void LoadProject(LoadedProjectData projectData)
+        {
+            try
+            {
+                _loadedProjectData = projectData;
+
+                // 更新项目状态
+                CurrentProjectName = projectData.Project.Name;
+                IsProjectOpen = true;
+                StatusMessage = $"项目 {projectData.Project.Name} 加载完成";
+
+                // 清空现有项目项
+                ProjectItems.Clear();
+
+                // 加载项目文件结构到项目资源管理器
+                LoadProjectStructure(projectData);
+
+                System.Diagnostics.Debug.WriteLine($"MainViewModel: 项目 {projectData.Project.Name} 加载完成");
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"加载项目失败: {ex.Message}";
+                System.Diagnostics.Debug.WriteLine($"MainViewModel加载项目失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 加载项目文件结构到UI
+        /// </summary>
+        /// <param name="projectData">项目数据</param>
+        private void LoadProjectStructure(LoadedProjectData projectData)
+        {
+            try
+            {
+                // 添加项目根节点
+                var rootNode = new ProjectTreeItem
+                {
+                    Name = projectData.Project.Name,
+                    Type = ProjectItemType.Project,
+                    IsExpanded = true,
+                    Children = new ObservableCollection<ProjectTreeItem>()
+                };
+
+                // ProjectTreeItem中没有Description属性，这里暂时不设置
+
+                // 将根节点添加到ProjectItems
+                ProjectItems.Add(rootNode);
+
+                System.Diagnostics.Debug.WriteLine($"项目文件结构已加载: {projectData.Project.Name}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"加载项目结构失败: {ex.Message}");
+            }
+        }
+
+        #endregion
     }
 }

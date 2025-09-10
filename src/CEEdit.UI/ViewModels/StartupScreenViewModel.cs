@@ -1,14 +1,17 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Win32;
+using YamlDotNet.Serialization;
 using CEEdit.Core.Models.Project;
 using CEEdit.Core.Services.Implementations;
+using CEEdit.Core.Services.Interfaces;
 
 namespace CEEdit.UI.ViewModels
 {
@@ -20,10 +23,13 @@ namespace CEEdit.UI.ViewModels
         private bool _isProjectSelected;
         private string _selectedProjectPath = string.Empty;
         private readonly ProjectHistoryService _projectHistoryService;
+        private readonly IProjectLoaderService _projectLoaderService;
+        private LoadedProjectData? _loadedProjectData;
 
         public StartupScreenViewModel()
         {
             _projectHistoryService = new ProjectHistoryService();
+            _projectLoaderService = new ProjectLoaderService();
             // 初始化命令
             NewProjectCommand = new RelayCommand(ExecuteNewProject);
             OpenProjectCommand = new RelayCommand(ExecuteOpenProject);
@@ -78,6 +84,11 @@ namespace CEEdit.UI.ViewModels
         /// </summary>
         public ObservableCollection<ProjectHistoryItem> RecentProjects { get; } = new();
 
+        /// <summary>
+        /// 加载的项目数据
+        /// </summary>
+        public LoadedProjectData? LoadedProjectData => _loadedProjectData;
+
         #endregion
 
         #region 命令
@@ -106,13 +117,25 @@ namespace CEEdit.UI.ViewModels
                 
                 if (newProjectWindow.DialogResult)
                 {
-                    var projectName = newProjectWindow.ProjectName;
-                    var projectLocation = newProjectWindow.ProjectLocation;
-                    var fullProjectPath = Path.Combine(projectLocation, projectName);
+                    // 收集用户输入的所有信息
+                    var projectInfo = new ProjectCreationInfo
+                    {
+                        ProjectName = newProjectWindow.ProjectName,
+                        ProjectLocation = newProjectWindow.ProjectLocation,
+                        ProjectVersion = newProjectWindow.ProjectVersion,
+                        ProjectAuthor = newProjectWindow.ProjectAuthor,
+                        ProjectDescription = newProjectWindow.ProjectDescription,
+                        IsProjectEnabled = newProjectWindow.IsProjectEnabled,
+                        SelectedTemplate = newProjectWindow.SelectedTemplate,
+                        InitGit = newProjectWindow.InitGit,
+                        AddSampleCode = newProjectWindow.AddSampleCode,
+                        CreateReadme = newProjectWindow.CreateReadme
+                    };
                     
-                    // 创建项目文件路径
-                    var projectFilePath = Path.Combine(fullProjectPath, $"{projectName}.ceproj");
-                    CreateNewProject(projectFilePath);
+                    var fullProjectPath = Path.Combine(projectInfo.ProjectLocation, projectInfo.ProjectName);
+                    var projectFilePath = Path.Combine(fullProjectPath, $"{projectInfo.ProjectName}.ceproj");
+                    
+                    CreateNewProject(projectFilePath, projectInfo);
                 }
             }
             catch (Exception ex)
@@ -205,7 +228,7 @@ namespace CEEdit.UI.ViewModels
 
         #region 私有方法
 
-        private void CreateNewProject(string projectPath)
+        private void CreateNewProject(string projectPath, ProjectCreationInfo projectInfo)
         {
             try
             {
@@ -216,12 +239,33 @@ namespace CEEdit.UI.ViewModels
                     Directory.CreateDirectory(projectDir);
                 }
 
-                // 创建基本的项目文件内容
-                var projectContent = GenerateProjectTemplate();
-                File.WriteAllText(projectPath, projectContent);
-
                 // 创建项目子目录
                 CreateProjectDirectories(projectDir!);
+
+                // 生成pack.yml文件
+                GeneratePackYmlFile(projectDir!, projectInfo);
+
+                // 创建项目文件内容
+                var projectContent = GenerateProjectTemplate(projectInfo);
+                File.WriteAllText(projectPath, projectContent);
+
+                // 如果需要创建README
+                if (projectInfo.CreateReadme)
+                {
+                    GenerateReadmeFile(projectDir!, projectInfo);
+                }
+
+                // 如果需要初始化Git
+                if (projectInfo.InitGit)
+                {
+                    InitializeGitRepository(projectDir!);
+                }
+
+                // 如果需要添加示例代码
+                if (projectInfo.AddSampleCode)
+                {
+                    GenerateSampleCode(projectDir!, projectInfo);
+                }
 
                 // 设置为已选择项目
                 SelectedProjectPath = projectPath;
@@ -229,6 +273,8 @@ namespace CEEdit.UI.ViewModels
 
                 // 添加到最近项目列表
                 _ = AddToRecentProjectsAsync(projectPath);
+                
+                System.Diagnostics.Debug.WriteLine($"项目创建成功: {projectPath}");
             }
             catch (Exception ex)
             {
@@ -237,7 +283,7 @@ namespace CEEdit.UI.ViewModels
             }
         }
 
-        public void OpenProject(string projectPath)
+        public async void OpenProject(string projectPath)
         {
             try
             {
@@ -248,12 +294,33 @@ namespace CEEdit.UI.ViewModels
                     return;
                 }
 
+                // 显示加载状态
+                System.Diagnostics.Debug.WriteLine($"开始加载项目: {projectPath}");
+
+                // 使用ProjectLoaderService加载项目数据
+                _loadedProjectData = await _projectLoaderService.LoadProjectAsync(projectPath);
+
+                if (_loadedProjectData == null || !_loadedProjectData.IsLoaded)
+                {
+                    var errorMsg = _loadedProjectData?.LoadError ?? "未知错误";
+                    System.Windows.MessageBox.Show($"加载项目失败: {errorMsg}", "错误", 
+                        System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    return;
+                }
+
                 // 设置为已选择项目
                 SelectedProjectPath = projectPath;
                 IsProjectSelected = true;
 
                 // 添加到最近项目列表
                 _ = AddToRecentProjectsAsync(projectPath);
+
+                System.Diagnostics.Debug.WriteLine($"项目加载完成: {_loadedProjectData.Project.Name}");
+                System.Diagnostics.Debug.WriteLine($"项目目录: {_loadedProjectData.ProjectDirectory}");
+                System.Diagnostics.Debug.WriteLine($"pack.yml: {(_loadedProjectData.PackYml != null ? "已加载" : "未找到")}");
+                System.Diagnostics.Debug.WriteLine($"文件统计: {_loadedProjectData.FileStructure.Blocks.Count}个方块, " +
+                    $"{_loadedProjectData.FileStructure.Items.Count}个物品, " +
+                    $"{_loadedProjectData.FileStructure.Recipes.Count}个配方");
             }
             catch (Exception ex)
             {
@@ -297,17 +364,218 @@ namespace CEEdit.UI.ViewModels
             }
         }
 
-        private string GenerateProjectTemplate()
+        /// <summary>
+        /// 生成pack.yml文件
+        /// </summary>
+        private void GeneratePackYmlFile(string projectDir, ProjectCreationInfo projectInfo)
         {
-            return """
+            var packYml = new PackYml
+            {
+                Author = projectInfo.ProjectAuthor,
+                Version = projectInfo.ProjectVersion,
+                Description = projectInfo.ProjectDescription,
+                Namespace = projectInfo.GetNamespace(),
+                Enable = projectInfo.IsProjectEnabled
+            };
+
+            var serializer = new SerializerBuilder()
+                .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
+                .Build();
+
+            var yamlContent = serializer.Serialize(packYml);
+            var packYmlPath = Path.Combine(projectDir, "pack.yml");
+            
+            File.WriteAllText(packYmlPath, yamlContent);
+            System.Diagnostics.Debug.WriteLine($"已创建pack.yml文件: {packYmlPath}");
+        }
+
+        /// <summary>
+        /// 生成README.md文件
+        /// </summary>
+        private void GenerateReadmeFile(string projectDir, ProjectCreationInfo projectInfo)
+        {
+            var readmeContent = $"""
+                # {projectInfo.ProjectName}
+
+                {projectInfo.ProjectDescription}
+
+                ## 项目信息
+
+                - **作者**: {projectInfo.ProjectAuthor}
+                - **版本**: {projectInfo.ProjectVersion}
+                - **命名空间**: {projectInfo.GetNamespace()}
+
+                ## 项目结构
+
+                ```
+                {projectInfo.ProjectName}/
+                ├── pack.yml              # 项目配置文件
+                ├── {projectInfo.ProjectName}.ceproj    # CEEdit项目文件
+                ├── blocks/               # 方块定义
+                ├── items/                # 物品定义
+                ├── recipes/              # 配方定义
+                └── resources/            # 资源文件
+                    ├── textures/         # 纹理文件
+                    ├── models/           # 模型文件
+                    └── sounds/           # 音效文件
+                ```
+
+                ## 开始使用
+
+                1. 使用CEEdit打开此项目
+                2. 在相应目录中添加你的方块、物品和配方
+                3. 在resources目录中添加纹理和其他资源文件
+                4. 构建并导出你的插件
+
+                ---
+                
+                *由CEEdit自动生成于 {DateTime.Now:yyyy-MM-dd HH:mm:ss}*
+                """;
+
+            var readmePath = Path.Combine(projectDir, "README.md");
+            File.WriteAllText(readmePath, readmeContent);
+            System.Diagnostics.Debug.WriteLine($"已创建README.md文件: {readmePath}");
+        }
+
+        /// <summary>
+        /// 初始化Git仓库
+        /// </summary>
+        private void InitializeGitRepository(string projectDir)
+        {
+            try
+            {
+                // 创建.gitignore文件
+                var gitignoreContent = """
+                    # CEEdit临时文件
+                    *.tmp
+                    *.cache
+                    .ceedit/
+
+                    # 构建输出
+                    build/
+                    dist/
+                    output/
+
+                    # 系统文件
+                    .DS_Store
+                    Thumbs.db
+                    desktop.ini
+
+                    # IDE文件
+                    .vscode/
+                    .idea/
+                    """;
+
+                var gitignorePath = Path.Combine(projectDir, ".gitignore");
+                File.WriteAllText(gitignorePath, gitignoreContent);
+
+                // 尝试初始化Git仓库
+                var processStartInfo = new ProcessStartInfo
+                {
+                    FileName = "git",
+                    Arguments = "init",
+                    WorkingDirectory = projectDir,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using var process = Process.Start(processStartInfo);
+                process?.WaitForExit();
+
+                System.Diagnostics.Debug.WriteLine($"已初始化Git仓库: {projectDir}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"初始化Git仓库失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 生成示例代码
+        /// </summary>
+        private void GenerateSampleCode(string projectDir, ProjectCreationInfo projectInfo)
+        {
+            var namespaceName = projectInfo.GetNamespace();
+            
+            // 创建示例方块
+            var sampleBlockContent = $$"""
+                {
+                  "id": "{{namespaceName}}_example_block",
+                  "name": "示例方块",
+                  "material": "STONE",
+                  "hardness": 3.0,
+                  "resistance": 6.0,
+                  "tool": "pickaxe",
+                  "texture": {
+                    "all": "{{namespaceName}}/blocks/example_block"
+                  },
+                  "drops": [
+                    {
+                      "item": "{{namespaceName}}_example_block",
+                      "count": 1
+                    }
+                  ]
+                }
+                """;
+
+            var blocksDir = Path.Combine(projectDir, "blocks");
+            File.WriteAllText(Path.Combine(blocksDir, "example_block.json"), sampleBlockContent);
+
+            // 创建示例物品
+            var sampleItemContent = $$"""
+                {
+                  "id": "{{namespaceName}}_example_item",
+                  "name": "示例物品",
+                  "material": "STICK",
+                  "texture": "{{namespaceName}}/items/example_item",
+                  "stackable": true,
+                  "maxStackSize": 64,
+                  "description": "这是一个示例物品"
+                }
+                """;
+
+            var itemsDir = Path.Combine(projectDir, "items");
+            File.WriteAllText(Path.Combine(itemsDir, "example_item.json"), sampleItemContent);
+
+            // 创建示例配方
+            var sampleRecipeContent = $$"""
+                {
+                  "type": "shaped",
+                  "result": {
+                    "item": "{{namespaceName}}_example_block",
+                    "count": 1
+                  },
+                  "pattern": [
+                    "SSS",
+                    "SSS",
+                    "SSS"
+                  ],
+                  "ingredients": {
+                    "S": "STONE"
+                  }
+                }
+                """;
+
+            var recipesDir = Path.Combine(projectDir, "recipes");
+            File.WriteAllText(Path.Combine(recipesDir, "example_block_recipe.json"), sampleRecipeContent);
+
+            System.Diagnostics.Debug.WriteLine($"已生成示例代码文件");
+        }
+
+        private string GenerateProjectTemplate(ProjectCreationInfo projectInfo)
+        {
+            return $$"""
                    {
-                     "name": "CEEdit Project",
-                     "version": "1.0.0",
-                     "description": "A CraftEngine plugin project",
-                     "author": "Your Name",
+                     "name": "{{projectInfo.ProjectName}}",
+                     "version": "{{projectInfo.ProjectVersion}}",
+                     "description": "{{projectInfo.ProjectDescription}}",
+                     "author": "{{projectInfo.ProjectAuthor}}",
+                     "namespace": "{{projectInfo.GetNamespace()}}",
+                     "enabled": {{projectInfo.IsProjectEnabled.ToString().ToLower()}},
+                     "template": "{{projectInfo.SelectedTemplate}}",
                      "minecraft_version": "1.20.4",
                      "api_version": "1.20",
-                     "main": "plugin.yml",
+                     "created": "{{DateTime.Now:yyyy-MM-dd HH:mm:ss}}",
                      "blocks": [],
                      "items": [],
                      "recipes": [],

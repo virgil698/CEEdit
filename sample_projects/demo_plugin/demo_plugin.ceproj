@@ -1,0 +1,6 @@
+# Demo Plugin Project
+{
+  "name": "Demo Plugin",
+  "version": "1.2.3",
+  "type": "CraftEngine Plugin"
+}

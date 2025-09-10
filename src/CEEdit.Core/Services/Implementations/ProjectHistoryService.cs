@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using YamlDotNet.Serialization;
 using CEEdit.Core.Models.Project;
 using CEEdit.Core.Services.Interfaces;
 using CEEdit.Core.Models.Common;
@@ -150,18 +152,15 @@ namespace CEEdit.Core.Services.Implementations
             history.RecentProjects.RemoveAll(p => string.Equals(p.ProjectPath, projectPath, 
                 StringComparison.OrdinalIgnoreCase));
 
-            // 创建新的历史项
-            var historyItem = new ProjectHistoryItem
-            {
-                ProjectPath = projectPath,
-                ProjectName = Path.GetFileNameWithoutExtension(projectPath),
-                ProjectType = projectType ?? InferProjectType(projectPath),
-                Description = description ?? string.Empty,
-                LastOpenedTime = DateTime.Now,
-                LastModifiedTime = File.Exists(projectPath) 
-                    ? File.GetLastWriteTime(projectPath) 
-                    : DateTime.Now
-            };
+            // 创建包含pack.yml信息的项目历史项
+            var historyItem = await CreateProjectHistoryItemAsync(projectPath);
+            
+            // 覆盖手动提供的参数
+            if (!string.IsNullOrEmpty(projectType))
+                historyItem.ProjectType = projectType;
+            
+            if (!string.IsNullOrEmpty(description))
+                historyItem.Description = description;
 
             // 添加到列表顶部
             history.RecentProjects.Insert(0, historyItem);
@@ -358,6 +357,104 @@ namespace CEEdit.Core.Services.Implementations
                 System.Diagnostics.Debug.WriteLine($"初始化项目历史服务失败: {ex.Message}");
                 throw;
             }
+        }
+
+        /// <summary>
+        /// 从项目目录读取pack.yml文件
+        /// </summary>
+        /// <param name="projectPath">项目路径（.ceproj文件路径）</param>
+        /// <returns>pack.yml数据，如果读取失败则返回null</returns>
+        private async Task<PackYml?> ReadPackYmlAsync(string projectPath)
+        {
+            try
+            {
+                // 获取项目目录
+                var projectDir = Path.GetDirectoryName(projectPath);
+                if (string.IsNullOrEmpty(projectDir) || !Directory.Exists(projectDir))
+                    return null;
+
+                // 查找pack.yml文件
+                var packYmlPath = Path.Combine(projectDir, "pack.yml");
+                if (!File.Exists(packYmlPath))
+                    return null;
+
+                // 读取并解析YAML文件
+                var yamlContent = await File.ReadAllTextAsync(packYmlPath);
+                if (string.IsNullOrWhiteSpace(yamlContent))
+                    return null;
+
+                var deserializer = new DeserializerBuilder()
+                    .IgnoreUnmatchedProperties()
+                    .Build();
+
+                var packYml = deserializer.Deserialize<PackYml>(yamlContent);
+                return packYml;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"读取pack.yml文件失败: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 创建包含pack.yml信息的ProjectHistoryItem
+        /// </summary>
+        /// <param name="projectPath">项目路径</param>
+        /// <returns>项目历史项</returns>
+        private async Task<ProjectHistoryItem> CreateProjectHistoryItemAsync(string projectPath)
+        {
+            var historyItem = new ProjectHistoryItem
+            {
+                ProjectPath = projectPath,
+                ProjectName = Path.GetFileNameWithoutExtension(projectPath),
+                LastOpenedTime = DateTime.Now,
+                LastModifiedTime = File.Exists(projectPath) 
+                    ? File.GetLastWriteTime(projectPath) 
+                    : DateTime.Now,
+                ProjectType = "CEEdit项目"
+            };
+
+            // 尝试读取pack.yml信息
+            var packYml = await ReadPackYmlAsync(projectPath);
+            if (packYml != null && packYml.IsValid)
+            {
+                // 使用pack.yml中的信息更新项目信息
+                if (!string.IsNullOrWhiteSpace(packYml.Author))
+                    historyItem.Author = packYml.Author;
+
+                if (!string.IsNullOrWhiteSpace(packYml.Version))
+                    historyItem.Version = packYml.Version;
+
+                if (!string.IsNullOrWhiteSpace(packYml.Description))
+                    historyItem.Description = packYml.Description;
+
+                if (!string.IsNullOrWhiteSpace(packYml.Namespace))
+                {
+                    historyItem.Namespace = packYml.Namespace;
+                    // 如果有命名空间，使用它作为项目名称
+                    historyItem.ProjectName = packYml.Namespace;
+                }
+
+                historyItem.Enable = packYml.Enable;
+
+                // 添加一些标签
+                var tags = new List<string>();
+                if (!string.IsNullOrWhiteSpace(packYml.Author))
+                    tags.Add($"作者:{packYml.Author}");
+                if (!string.IsNullOrWhiteSpace(packYml.Version))
+                    tags.Add($"v{packYml.Version}");
+                
+                historyItem.Tags = tags;
+
+                Debug.WriteLine($"成功读取pack.yml信息: {packYml.GetFullInfo()}");
+            }
+            else
+            {
+                Debug.WriteLine($"未找到有效的pack.yml文件: {projectPath}");
+            }
+
+            return historyItem;
         }
 
         /// <summary>

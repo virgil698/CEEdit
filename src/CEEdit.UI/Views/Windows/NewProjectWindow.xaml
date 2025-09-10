@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="新建项目 - CEEdit" 
-        Height="850" Width="1150"
-        MinHeight="900" MinWidth="1200"
+        Height="900" Width="1200"
+        MinHeight="800" MinWidth="1100"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BackgroundBrush}"
         ResizeMode="CanResize"
@@ -18,13 +18,13 @@
                 <ResourceDictionary Source="pack://application:,,,/CEEdit;component/src/CEEdit.UI/Themes/ModernTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             
-            <!-- IDEA风格的表单标签样式 -->
+            <!-- 现代化表单标签样式 -->
             <Style x:Key="FormLabelStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}"/>
-                <Setter Property="FontSize" Value="13"/>
-                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="FontSize" Value="{StaticResource BodyFontSize}"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-                <Setter Property="Margin" Value="0,0,0,4"/>
+                <Setter Property="Margin" Value="0,0,0,6"/>
                 <Setter Property="VerticalAlignment" Value="Top"/>
             </Style>
             

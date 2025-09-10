@@ -163,6 +163,30 @@ namespace CEEdit.Core.Models.Project
         public List<string> Tags { get; set; } = new();
 
         /// <summary>
+        /// 项目作者（来自pack.yml）
+        /// </summary>
+        [JsonProperty("author")]
+        public string Author { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 项目版本（来自pack.yml）
+        /// </summary>
+        [JsonProperty("version")]
+        public string Version { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 项目命名空间（来自pack.yml）
+        /// </summary>
+        [JsonProperty("namespace")]
+        public string Namespace { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 是否启用（来自pack.yml）
+        /// </summary>
+        [JsonProperty("enable")]
+        public bool Enable { get; set; } = true;
+
+        /// <summary>
         /// 获取友好的最后打开时间显示
         /// </summary>
         [JsonIgnore]

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="CEEdit - CraftEngine 插件编辑器" 
-        Height="800" Width="1200"
-        MinHeight="600" MinWidth="1000"
+        Height="900" Width="1400"
+        MinHeight="700" MinWidth="1200"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BackgroundBrush}"
         ResizeMode="CanResize">
@@ -22,42 +22,51 @@
     <!-- VSCode 风格的三栏布局 -->
     <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="48"/>   <!-- Activity Bar -->
+            <ColumnDefinition Width="56"/>   <!-- Activity Bar -->
             <ColumnDefinition Width="300"/>  <!-- Sidebar -->
             <ColumnDefinition Width="*"/>    <!-- Main Content -->
         </Grid.ColumnDefinitions>
         
-        <!-- 左侧活动栏(Activity Bar) -->
+        <!-- 左侧活动栏(Activity Bar) - 现代化设计 -->
         <Border Grid.Column="0" Background="{StaticResource TertiaryBackgroundBrush}" 
                 BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
-            <StackPanel>
+            <StackPanel Margin="0,12,0,0">
                 <Button Style="{StaticResource ActivityBarButtonStyle}" 
                         Command="{Binding ShowRecentProjectsCommand}"
-                        ToolTip="最近项目">
+                        ToolTip="最近项目"
+                        Margin="0,4">
                     <Grid>
-                        <Ellipse Width="24" Height="24" Fill="{StaticResource AccentBrush}"/>
-                        <TextBlock Text="📁" FontSize="14" HorizontalAlignment="Center" 
-                                   VerticalAlignment="Center" Foreground="White"/>
+                        <Border Width="32" Height="32" CornerRadius="{StaticResource DefaultCornerRadius}"
+                                Background="{StaticResource AccentBrush}">
+                            <TextBlock Text="📁" FontSize="18" HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" Foreground="White"/>
+                        </Border>
                     </Grid>
                 </Button>
                 
                 <Button Style="{StaticResource ActivityBarButtonStyle}" 
                         Command="{Binding ShowTemplatesCommand}"
-                        ToolTip="项目模板">
+                        ToolTip="项目模板"
+                        Margin="0,4">
                     <Grid>
-                        <Ellipse Width="24" Height="24" Fill="{StaticResource SuccessBrush}"/>
-                        <TextBlock Text="📋" FontSize="14" HorizontalAlignment="Center" 
-                                   VerticalAlignment="Center" Foreground="White"/>
+                        <Border Width="32" Height="32" CornerRadius="{StaticResource DefaultCornerRadius}"
+                                Background="{StaticResource SuccessBrush}">
+                            <TextBlock Text="📋" FontSize="18" HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" Foreground="White"/>
+                        </Border>
                     </Grid>
                 </Button>
                 
                 <Button Style="{StaticResource ActivityBarButtonStyle}" 
                         Command="{Binding ShowSettingsCommand}"
-                        ToolTip="设置">
+                        ToolTip="设置"
+                        Margin="0,4">
                     <Grid>
-                        <Ellipse Width="24" Height="24" Fill="{StaticResource SecondaryTextBrush}"/>
-                        <TextBlock Text="⚙️" FontSize="14" HorizontalAlignment="Center" 
-                                   VerticalAlignment="Center" Foreground="White"/>
+                        <Border Width="32" Height="32" CornerRadius="{StaticResource DefaultCornerRadius}"
+                                Background="{StaticResource SecondaryTextBrush}">
+                            <TextBlock Text="⚙️" FontSize="18" HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" Foreground="White"/>
+                        </Border>
                     </Grid>
                 </Button>
             </StackPanel>

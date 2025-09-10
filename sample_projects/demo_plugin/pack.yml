@@ -1,0 +1,5 @@
+author: TestUser
+version: 1.2.3
+description: A demo plugin for CEEdit testing
+namespace: demo_plugin
+enable: true
