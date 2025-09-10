@@ -17,12 +17,18 @@ namespace CEEdit
             InitializeViewModel();
         }
 
-        private void InitializeViewModel()
+        public MainWindow(IProjectService projectService, IProjectHistoryService historyService)
+        {
+            InitializeComponent();
+            InitializeViewModel(projectService, historyService);
+        }
+
+        private void InitializeViewModel(IProjectService? projectService = null, IProjectHistoryService? historyService = null)
         {
             try
             {
-                // 创建MainViewModel，后续可以使用依赖注入
-                var viewModel = new MainViewModel();
+                // 创建MainViewModel
+                var viewModel = new MainViewModel(projectService);
                 DataContext = viewModel;
             }
             catch (Exception ex)

@@ -16,6 +16,11 @@ namespace CEEdit.Core.Services.Interfaces
         event Action<ProjectHistory>? HistoryChanged;
 
         /// <summary>
+        /// 初始化项目历史服务
+        /// </summary>
+        Task InitializeAsync();
+
+        /// <summary>
         /// 获取项目历史记录
         /// </summary>
         /// <returns>项目历史记录</returns>

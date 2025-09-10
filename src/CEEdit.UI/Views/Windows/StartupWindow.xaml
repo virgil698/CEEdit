@@ -127,9 +127,9 @@
                                         Command="{Binding DataContext.OpenRecentProjectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}">
                                     <StackPanel>
-                                        <TextBlock Text="{Binding Name}" FontSize="12" 
+                                        <TextBlock Text="{Binding ProjectName}" FontSize="12" 
                                                    FontWeight="Medium" Margin="0,0,0,2"/>
-                                        <TextBlock Text="{Binding Path}" FontSize="10" 
+                                        <TextBlock Text="{Binding ProjectPath}" FontSize="10" 
                                                    Foreground="{StaticResource SecondaryTextBrush}"
                                                    TextTrimming="CharacterEllipsis"/>
                                     </StackPanel>

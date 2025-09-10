@@ -186,7 +186,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task CleanOutput()
+        private void CleanOutput()
         {
             try
             {
@@ -207,7 +207,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task ValidateProject()
+        private void ValidateProject()
         {
             try
             {
@@ -319,7 +319,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task SaveConfig()
+        private void SaveConfig()
         {
             try
             {
@@ -345,7 +345,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task LoadConfig()
+        private void LoadConfig()
         {
             try
             {
@@ -384,7 +384,7 @@ namespace CEEdit.UI.ViewModels
                 BuildStatus = "初始化构建...";
 
                 // 验证设置
-                await ValidateProject();
+                ValidateProject();
                 if (BuildStatus.Contains("失败"))
                 {
                     return;
@@ -411,7 +411,7 @@ namespace CEEdit.UI.ViewModels
                 // 优化资源
                 if (OptimizeResources)
                 {
-                    await OptimizeProjectResources();
+                    OptimizeProjectResources();
                 }
 
                 BuildProgress = 80;
@@ -472,7 +472,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task RunPlugin()
+        private void RunPlugin()
         {
             try
             {
@@ -527,7 +527,7 @@ namespace CEEdit.UI.ViewModels
             }
         }
 
-        private async Task OptimizeProjectResources()
+        private void OptimizeProjectResources()
         {
             try
             {

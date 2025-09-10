@@ -94,6 +94,17 @@ namespace CEEdit.Core.Services.Implementations
                 _cachedHistory = newHistory;
             }
             
+            // 首次创建时自动保存到文件
+            try
+            {
+                await SaveProjectHistoryAsync(newHistory);
+                System.Diagnostics.Debug.WriteLine($"已创建新的项目历史文件: {_historyFilePath}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"创建项目历史文件失败: {ex.Message}");
+            }
+            
             return newHistory;
         }
 
@@ -321,6 +332,32 @@ namespace CEEdit.Core.Services.Implementations
             }
 
             return results.OrderByDescending(p => p.LastOpenedTime).ToList();
+        }
+
+        /// <summary>
+        /// 初始化项目历史服务（确保文件和目录存在）
+        /// </summary>
+        public async Task InitializeAsync()
+        {
+            try
+            {
+                // 确保数据目录存在
+                var directory = Path.GetDirectoryName(_historyFilePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                    System.Diagnostics.Debug.WriteLine($"已创建数据目录: {directory}");
+                }
+
+                // 检查并初始化历史文件
+                await GetProjectHistoryAsync();
+                System.Diagnostics.Debug.WriteLine("项目历史服务初始化完成");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"初始化项目历史服务失败: {ex.Message}");
+                throw;
+            }
         }
 
         /// <summary>

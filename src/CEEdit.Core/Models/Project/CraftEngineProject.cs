@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CEEdit.Core.Models.Blocks;
 using CEEdit.Core.Models.Items;
@@ -85,6 +86,11 @@ namespace CEEdit.Core.Models.Project
         /// 目标CraftEngine版本
         /// </summary>
         public string TargetCraftEngineVersion { get; set; } = "1.20.0";
+
+        /// <summary>
+        /// 是否启用插件
+        /// </summary>
+        public bool IsEnabled { get; set; } = true;
     }
 }
 

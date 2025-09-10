@@ -35,4 +35,23 @@
     <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
 
+  <!-- 配置依赖DLL输出到libraries文件夹 -->
+  <Target Name="CopyDependenciesToLibrariesFolder" AfterTargets="Build">
+    <ItemGroup>
+      <!-- 获取所有依赖DLL，排除主程序文件 -->
+      <DependencyFiles Include="$(OutputPath)*.dll" Exclude="$(OutputPath)$(AssemblyName).dll" />
+    </ItemGroup>
+    
+    <!-- 创建libraries文件夹 -->
+    <MakeDir Directories="$(OutputPath)libraries" />
+    
+    <!-- 复制依赖DLL到libraries文件夹 -->
+    <Copy SourceFiles="@(DependencyFiles)" 
+          DestinationFolder="$(OutputPath)libraries" 
+          SkipUnchangedFiles="true" />
+    
+    <!-- 删除输出目录中的依赖DLL -->
+    <Delete Files="@(DependencyFiles)" />
+  </Target>
+
 </Project>

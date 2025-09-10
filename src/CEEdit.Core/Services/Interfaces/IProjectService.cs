@@ -1,5 +1,8 @@
 using CEEdit.Core.Models.Project;
-using CEEdit.Core.Models.Resources;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CEEdit.Core.Services.Interfaces
 {
@@ -152,7 +155,59 @@ namespace CEEdit.Core.Services.Interfaces
         void MarkAsUnmodified(CraftEngineProject? project = null);
     }
 
-    #region 事件参数
+    /// <summary>
+    /// 构建模式枚举
+    /// </summary>
+    public enum BuildMode
+    {
+        /// <summary>
+        /// 调试模式
+        /// </summary>
+        Debug,
+
+        /// <summary>
+        /// 发布模式
+        /// </summary>
+        Release
+    }
+
+    /// <summary>
+    /// 项目模板
+    /// </summary>
+    public class ProjectTemplate
+    {
+        /// <summary>
+        /// 模板ID
+        /// </summary>
+        public string Id { get; set; } = "";
+
+        /// <summary>
+        /// 模板名称
+        /// </summary>
+        public string Name { get; set; } = "";
+
+        /// <summary>
+        /// 模板描述
+        /// </summary>
+        public string Description { get; set; } = "";
+
+        /// <summary>
+        /// 模板图标
+        /// </summary>
+        public string Icon { get; set; } = "";
+
+        /// <summary>
+        /// 模板类别
+        /// </summary>
+        public string Category { get; set; } = "";
+
+        /// <summary>
+        /// 预览内容
+        /// </summary>
+        public string Preview { get; set; } = "";
+    }
+
+    #region 事件参数和结果类型
 
     /// <summary>
     /// 项目改变事件参数
@@ -163,17 +218,12 @@ namespace CEEdit.Core.Services.Interfaces
         /// 旧项目
         /// </summary>
         public CraftEngineProject? OldProject { get; }
-
+        
         /// <summary>
         /// 新项目
         /// </summary>
         public CraftEngineProject? NewProject { get; }
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="oldProject">旧项目</param>
-        /// <param name="newProject">新项目</param>
+        
         public ProjectChangedEventArgs(CraftEngineProject? oldProject, CraftEngineProject? newProject)
         {
             OldProject = oldProject;
@@ -187,20 +237,15 @@ namespace CEEdit.Core.Services.Interfaces
     public class ProjectSavedEventArgs : EventArgs
     {
         /// <summary>
-        /// 保存的项目
+        /// 项目
         /// </summary>
         public CraftEngineProject Project { get; }
-
+        
         /// <summary>
         /// 保存路径
         /// </summary>
         public string SavePath { get; }
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="project">项目</param>
-        /// <param name="savePath">保存路径</param>
+        
         public ProjectSavedEventArgs(CraftEngineProject project, string savePath)
         {
             Project = project;
@@ -208,44 +253,77 @@ namespace CEEdit.Core.Services.Interfaces
         }
     }
 
-    #endregion
-
-    #region 辅助类
-
     /// <summary>
-    /// 最近项目信息
+    /// 验证结果
     /// </summary>
-    public class RecentProject
+    public class ValidationResult
     {
         /// <summary>
-        /// 项目名称
+        /// 是否成功
         /// </summary>
-        public string Name { get; set; } = string.Empty;
-
+        public bool IsValid { get; set; }
+        
         /// <summary>
-        /// 项目路径
+        /// 错误列表
         /// </summary>
-        public string Path { get; set; } = string.Empty;
-
+        public List<ValidationError> Errors { get; set; } = new();
+        
         /// <summary>
-        /// 最后访问时间
+        /// 警告列表
         /// </summary>
-        public DateTime LastAccessed { get; set; } = DateTime.Now;
+        public List<ValidationWarning> Warnings { get; set; } = new();
+    }
 
+    /// <summary>
+    /// 验证错误
+    /// </summary>
+    public class ValidationError
+    {
         /// <summary>
-        /// 项目是否存在
+        /// 错误消息
         /// </summary>
-        public bool Exists { get; set; } = true;
+        public string Message { get; set; } = "";
+        
+        /// <summary>
+        /// 错误代码
+        /// </summary>
+        public string Code { get; set; } = "";
+        
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string? FilePath { get; set; }
+        
+        /// <summary>
+        /// 行号
+        /// </summary>
+        public int? LineNumber { get; set; }
+    }
 
+    /// <summary>
+    /// 验证警告
+    /// </summary>
+    public class ValidationWarning
+    {
         /// <summary>
-        /// 项目描述
+        /// 警告消息
         /// </summary>
-        public string Description { get; set; } = string.Empty;
-
+        public string Message { get; set; } = "";
+        
         /// <summary>
-        /// 项目版本
+        /// 警告代码
         /// </summary>
-        public string Version { get; set; } = string.Empty;
+        public string Code { get; set; } = "";
+        
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string? FilePath { get; set; }
+        
+        /// <summary>
+        /// 行号
+        /// </summary>
+        public int? LineNumber { get; set; }
     }
 
     /// <summary>
@@ -254,78 +332,60 @@ namespace CEEdit.Core.Services.Interfaces
     public class BuildResult
     {
         /// <summary>
-        /// 构建是否成功
+        /// 是否成功
         /// </summary>
         public bool IsSuccess { get; set; }
-
+        
         /// <summary>
         /// 输出路径
         /// </summary>
-        public string OutputPath { get; set; } = string.Empty;
-
-        /// <summary>
-        /// 构建时间
-        /// </summary>
-        public TimeSpan BuildTime { get; set; }
-
-        /// <summary>
-        /// 错误列表
-        /// </summary>
-        public List<BuildError> Errors { get; set; } = new();
-
-        /// <summary>
-        /// 警告列表
-        /// </summary>
-        public List<BuildWarning> Warnings { get; set; } = new();
-
+        public string OutputPath { get; set; } = "";
+        
         /// <summary>
         /// 构建日志
         /// </summary>
-        public string BuildLog { get; set; } = string.Empty;
-
+        public List<string> Logs { get; set; } = new();
+        
         /// <summary>
-        /// 生成的文件列表
+        /// 错误列表
         /// </summary>
-        public List<string> GeneratedFiles { get; set; } = new();
+        public List<string> Errors { get; set; } = new();
+        
+        /// <summary>
+        /// 警告列表
+        /// </summary>
+        public List<string> Warnings { get; set; } = new();
     }
 
     /// <summary>
-    /// 构建错误
+    /// 最近项目
     /// </summary>
-    public class BuildError
+    public class RecentProject
     {
         /// <summary>
-        /// 错误消息
+        /// 项目名称
         /// </summary>
-        public string Message { get; set; } = string.Empty;
-
+        public string Name { get; set; } = "";
+        
         /// <summary>
-        /// 文件路径
+        /// 项目路径
         /// </summary>
-        public string FilePath { get; set; } = string.Empty;
-
+        public string Path { get; set; } = "";
+        
         /// <summary>
-        /// 行号
+        /// 最后访问时间
         /// </summary>
-        public int LineNumber { get; set; }
-
+        public DateTime LastAccessed { get; set; }
+        
         /// <summary>
-        /// 列号
+        /// 项目版本
         /// </summary>
-        public int ColumnNumber { get; set; }
-
+        public string Version { get; set; } = "";
+        
         /// <summary>
-        /// 错误代码
+        /// 项目作者
         /// </summary>
-        public string ErrorCode { get; set; } = string.Empty;
-    }
-
-    /// <summary>
-    /// 构建警告
-    /// </summary>
-    public class BuildWarning : BuildError
-    {
-        // 继承BuildError的所有属性
+        public string Author { get; set; } = "";
     }
 
     /// <summary>
@@ -337,68 +397,32 @@ namespace CEEdit.Core.Services.Interfaces
         /// 方块数量
         /// </summary>
         public int BlockCount { get; set; }
-
+        
         /// <summary>
         /// 物品数量
         /// </summary>
         public int ItemCount { get; set; }
-
+        
         /// <summary>
         /// 配方数量
         /// </summary>
         public int RecipeCount { get; set; }
-
+        
         /// <summary>
-        /// 纹理数量
+        /// 纹理文件数量
         /// </summary>
         public int TextureCount { get; set; }
-
-        /// <summary>
-        /// 模型数量
-        /// </summary>
-        public int ModelCount { get; set; }
-
-        /// <summary>
-        /// 音效数量
-        /// </summary>
-        public int SoundCount { get; set; }
-
-        /// <summary>
-        /// 总文件数
-        /// </summary>
-        public int TotalFileCount { get; set; }
-
+        
         /// <summary>
         /// 项目大小（字节）
         /// </summary>
         public long ProjectSize { get; set; }
-
+        
         /// <summary>
-        /// 创建时间
+        /// 文件总数
         /// </summary>
-        public DateTime CreatedAt { get; set; }
-
-        /// <summary>
-        /// 最后修改时间
-        /// </summary>
-        public DateTime LastModifiedAt { get; set; }
+        public int TotalFiles { get; set; }
     }
-
-    #endregion
-
-    #region 缺失的类型定义
-
-    /// <summary>
-    /// 构建模式
-    /// </summary>
-    public enum BuildMode
-    {
-        Debug,
-        Release,
-        Distribution
-    }
-
 
     #endregion
 }
-

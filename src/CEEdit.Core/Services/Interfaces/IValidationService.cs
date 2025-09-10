@@ -713,7 +713,7 @@ namespace CEEdit.Core.Services.Interfaces
     /// <summary>
     /// 验证结果
     /// </summary>
-    public class ValidationResult
+    public class ValidationServiceResult
     {
         public bool IsValid { get; set; }
         public List<string> Errors { get; set; } = new List<string>();

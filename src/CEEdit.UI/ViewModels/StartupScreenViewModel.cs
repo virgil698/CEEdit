@@ -4,8 +4,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Win32;
+using CEEdit.Core.Models.Project;
+using CEEdit.Core.Services.Implementations;
 
 namespace CEEdit.UI.ViewModels
 {
@@ -16,13 +19,15 @@ namespace CEEdit.UI.ViewModels
     {
         private bool _isProjectSelected;
         private string _selectedProjectPath = string.Empty;
+        private readonly ProjectHistoryService _projectHistoryService;
 
         public StartupScreenViewModel()
         {
+            _projectHistoryService = new ProjectHistoryService();
             // 初始化命令
             NewProjectCommand = new RelayCommand(ExecuteNewProject);
             OpenProjectCommand = new RelayCommand(ExecuteOpenProject);
-            OpenRecentProjectCommand = new RelayCommand<RecentProject>(ExecuteOpenRecentProject);
+            OpenRecentProjectCommand = new RelayCommand<ProjectHistoryItem>(ExecuteOpenRecentProject);
             CloneRepositoryCommand = new RelayCommand(ExecuteCloneRepository);
             ShowSamplesCommand = new RelayCommand(ExecuteShowSamples);
             ShowDocumentationCommand = new RelayCommand(ExecuteShowDocumentation);
@@ -31,7 +36,7 @@ namespace CEEdit.UI.ViewModels
             ShowTemplatesCommand = new RelayCommand(ExecuteShowTemplates);
 
             // 加载最近项目
-            LoadRecentProjects();
+            _ = LoadRecentProjectsAsync();
         }
 
         #region 属性
@@ -71,7 +76,7 @@ namespace CEEdit.UI.ViewModels
         /// <summary>
         /// 最近项目列表
         /// </summary>
-        public ObservableCollection<RecentProject> RecentProjects { get; } = new();
+        public ObservableCollection<ProjectHistoryItem> RecentProjects { get; } = new();
 
         #endregion
 
@@ -93,42 +98,55 @@ namespace CEEdit.UI.ViewModels
 
         private void ExecuteNewProject()
         {
-            // 显示新建项目对话框
-            var saveDialog = new SaveFileDialog
+            try
             {
-                Title = "新建 CEEdit 项目",
-                Filter = "CEEdit项目文件 (*.ceproj)|*.ceproj",
-                DefaultExt = "ceproj",
-                AddExtension = true
-            };
-
-            if (saveDialog.ShowDialog() == true)
+                // 直接打开新建项目窗口
+                var newProjectWindow = new CEEdit.UI.Views.Windows.NewProjectWindow();
+                newProjectWindow.ShowDialog();
+                
+                if (newProjectWindow.DialogResult)
+                {
+                    var projectName = newProjectWindow.ProjectName;
+                    var projectLocation = newProjectWindow.ProjectLocation;
+                    var fullProjectPath = Path.Combine(projectLocation, projectName);
+                    
+                    // 创建项目文件路径
+                    var projectFilePath = Path.Combine(fullProjectPath, $"{projectName}.ceproj");
+                    CreateNewProject(projectFilePath);
+                }
+            }
+            catch (Exception ex)
             {
-                CreateNewProject(saveDialog.FileName);
+                System.Windows.MessageBox.Show($"创建项目失败: {ex.Message}", "错误", 
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
 
         private void ExecuteOpenProject()
         {
-            // 显示打开项目对话框
-            var openDialog = new OpenFileDialog
+            try
             {
-                Title = "打开 CEEdit 项目",
-                Filter = "CEEdit项目文件 (*.ceproj)|*.ceproj|所有文件 (*.*)|*.*",
-                DefaultExt = "ceproj"
-            };
-
-            if (openDialog.ShowDialog() == true)
+                // 打开项目选择窗口，传递项目历史服务
+                var openProjectWindow = new CEEdit.UI.Views.Windows.OpenProjectWindow(_projectHistoryService);
+                var result = openProjectWindow.ShowDialog();
+                
+                if (result == true && !string.IsNullOrEmpty(openProjectWindow.SelectedProjectPath))
+                {
+                    OpenProject(openProjectWindow.SelectedProjectPath);
+                }
+            }
+            catch (Exception ex)
             {
-                OpenProject(openDialog.FileName);
+                System.Windows.MessageBox.Show($"打开项目窗口失败: {ex.Message}", "错误", 
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
 
-        private void ExecuteOpenRecentProject(RecentProject? project)
+        private void ExecuteOpenRecentProject(ProjectHistoryItem? project)
         {
             if (project != null)
             {
-                OpenProject(project.Path);
+                OpenProject(project.ProjectPath);
             }
         }
 
@@ -210,7 +228,7 @@ namespace CEEdit.UI.ViewModels
                 IsProjectSelected = true;
 
                 // 添加到最近项目列表
-                AddToRecentProjects(projectPath);
+                _ = AddToRecentProjectsAsync(projectPath);
             }
             catch (Exception ex)
             {
@@ -235,7 +253,7 @@ namespace CEEdit.UI.ViewModels
                 IsProjectSelected = true;
 
                 // 添加到最近项目列表
-                AddToRecentProjects(projectPath);
+                _ = AddToRecentProjectsAsync(projectPath);
             }
             catch (Exception ex)
             {
@@ -244,51 +262,39 @@ namespace CEEdit.UI.ViewModels
             }
         }
 
-        private void LoadRecentProjects()
+        private async Task LoadRecentProjectsAsync()
         {
-            // TODO: 从配置文件加载最近项目
-            // 暂时添加一些示例数据
-            RecentProjects.Clear();
-            RecentProjects.Add(new RecentProject 
-            { 
-                Name = "我的第一个插件", 
-                Path = @"C:\Projects\MyFirstPlugin\MyFirstPlugin.ceproj" 
-            });
-            RecentProjects.Add(new RecentProject 
-            { 
-                Name = "魔法物品模组", 
-                Path = @"C:\Projects\MagicItems\MagicItems.ceproj" 
-            });
+            try
+            {
+                var recentProjectItems = await _projectHistoryService.GetRecentProjectsAsync(10);
+                
+                // 清空现有列表并添加新项目
+                RecentProjects.Clear();
+                foreach (var project in recentProjectItems)
+                {
+                    RecentProjects.Add(project);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"加载最近项目失败: {ex.Message}");
+                // 加载失败时清空列表
+                RecentProjects.Clear();
+            }
         }
 
-        private void AddToRecentProjects(string projectPath)
+        private async Task AddToRecentProjectsAsync(string projectPath)
         {
-            var projectName = Path.GetFileNameWithoutExtension(projectPath);
-            var existingProject = RecentProjects.FirstOrDefault(p => p.Path == projectPath);
-
-            if (existingProject != null)
+            try
             {
-                // 移到最前面
-                RecentProjects.Remove(existingProject);
-                RecentProjects.Insert(0, existingProject);
+                await _projectHistoryService.AddRecentProjectAsync(projectPath, "CraftEngine项目");
+                // 重新加载最近项目列表
+                await LoadRecentProjectsAsync();
             }
-            else
+            catch (Exception ex)
             {
-                // 添加新项目
-                RecentProjects.Insert(0, new RecentProject 
-                { 
-                    Name = projectName, 
-                    Path = projectPath 
-                });
+                System.Diagnostics.Debug.WriteLine($"添加最近项目失败: {ex.Message}");
             }
-
-            // 保持最多10个最近项目
-            while (RecentProjects.Count > 10)
-            {
-                RecentProjects.RemoveAt(RecentProjects.Count - 1);
-            }
-
-            // TODO: 保存到配置文件
         }
 
         private string GenerateProjectTemplate()
@@ -339,14 +345,6 @@ namespace CEEdit.UI.ViewModels
         #endregion
     }
 
-    /// <summary>
-    /// 最近项目信息
-    /// </summary>
-    public class RecentProject
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Path { get; set; } = string.Empty;
-    }
 
     /// <summary>
     /// 简单的RelayCommand实现

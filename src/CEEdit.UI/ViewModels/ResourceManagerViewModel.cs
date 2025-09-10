@@ -222,14 +222,14 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task CreateFolder()
+        private void CreateFolder()
         {
             // TODO: 实现创建文件夹功能
             StatusMessage = "创建文件夹功能正在开发中...";
         }
 
         [RelayCommand]
-        private async Task DeleteSelected()
+        private void DeleteSelected()
         {
             if (SelectedFile == null) return;
 
@@ -255,7 +255,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task RenameSelected()
+        private void RenameSelected()
         {
             if (SelectedFile == null) return;
 
@@ -264,7 +264,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task OptimizeResources()
+        private void OptimizeResources()
         {
             try
             {
@@ -286,7 +286,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task ValidateResources()
+        private void ValidateResources()
         {
             try
             {
@@ -350,7 +350,7 @@ namespace CEEdit.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task ExportFile()
+        private void ExportFile()
         {
             if (SelectedFile == null) return;
 
@@ -439,7 +439,7 @@ namespace CEEdit.UI.ViewModels
         /// 加载项目资源
         /// </summary>
         /// <param name="projectPath">项目路径</param>
-        public async Task LoadProjectResourcesAsync(string projectPath)
+        public void LoadProjectResources(string projectPath)
         {
             CurrentProjectPath = projectPath;
             AllFiles.Clear();
@@ -448,7 +448,7 @@ namespace CEEdit.UI.ViewModels
             {
                 if (Directory.Exists(projectPath))
                 {
-                    await LoadDirectoryFilesAsync(projectPath);
+                    LoadDirectoryFiles(projectPath);
                 }
                 
                 InitializeFolderTree();
@@ -461,7 +461,7 @@ namespace CEEdit.UI.ViewModels
             }
         }
 
-        private async Task LoadDirectoryFilesAsync(string directoryPath)
+        private void LoadDirectoryFiles(string directoryPath)
         {
             var files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
             
