@@ -1,0 +1,372 @@
+<UserControl x:Class="CEEdit.UI.Views.UserControls.BlockEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/CEEdit;component/src/CEEdit.UI/Themes/ModernTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- 左侧编辑区域 -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      Background="{StaticResource BackgroundBrush}">
+            <StackPanel Margin="12,8,8,8">
+                
+                <!-- 基础信息 -->
+                <GroupBox Header="基础信息" Style="{StaticResource ModernGroupBoxStyle}">
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 方块ID -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="ID:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" 
+                                 Text="{Binding Block.Id, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 ToolTip="方块的唯一标识符，只能包含小写字母、数字和下划线"
+                                 Margin="0,0,0,6"/>
+                        
+                        <!-- 显示名称 -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="显示名称:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" 
+                                 Text="{Binding Block.DisplayName, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 ToolTip="在游戏中显示的方块名称"
+                                 Margin="0,0,0,6"/>
+
+                        <!-- 材质类型 -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="材质类型:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1"
+                                  SelectedItem="{Binding Block.Material}"
+                                  Style="{StaticResource ModernComboBoxStyle}"
+                                  ItemsSource="{Binding AvailableMaterials}"
+                                  ToolTip="选择方块的材质类型"
+                                  Margin="0,0,0,6"/>
+                        
+                        <!-- 模型路径 -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="模型文件:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <Grid Grid.Row="3" Grid.Column="1" Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding Block.ModelPath, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     ToolTip="3D模型文件路径"/>
+                            <Button Grid.Column="1" Content="浏览" 
+                                    Style="{StaticResource ModernButtonStyle}"
+                                    Command="{Binding BrowseModelCommand}" 
+                                    Margin="4,0,0,0"/>
+                            <Button Grid.Column="2" Content="建模" 
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Command="{Binding LaunchBlockbenchCommand}" 
+                                    Margin="4,0,0,0"
+                                    ToolTip="使用Blockbench进行3D建模"/>
+                        </Grid>
+                        
+                        <!-- 描述 -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="描述:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Top" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="4" Grid.Column="1"
+                                 Text="{Binding Block.Description, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 TextWrapping="Wrap" AcceptsReturn="True" MinLines="2" MaxLines="4"
+                                 ToolTip="方块的详细描述信息"/>
+                    </Grid>
+                </GroupBox>
+
+                <!-- 物理属性-->
+                <GroupBox Header="物理属性" Style="{StaticResource ModernGroupBoxStyle}">
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 硬度 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="硬度:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" 
+                                 Text="{Binding Block.Hardness, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 ToolTip="方块的挖掘难度，影响挖掘时间"
+                                 Margin="0,0,8,6"/>
+                        
+                        <!-- 爆炸抗性-->
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="爆炸抗性" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" 
+                                 Text="{Binding Block.BlastResistance, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 ToolTip="方块抵抗爆炸的能量"
+                                 Margin="0,0,0,6"/>
+
+                        <!-- 挖掘工具 -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="所需工具:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1"
+                                  SelectedItem="{Binding Block.RequiredTool}"
+                                  Style="{StaticResource ModernComboBoxStyle}"
+                                  ItemsSource="{Binding AvailableTools}"
+                                  ToolTip="挖掘此方块所需的工具类型"
+                                  Margin="0,0,8,6"/>
+                        
+                        <!-- 工具等级 -->
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="工具等级:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="1" Grid.Column="3" 
+                                 Text="{Binding Block.RequiredToolLevel, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 ToolTip="所需工具的最低等级"
+                                 Margin="0,0,0,6"/>
+
+                        <!-- 光照等级 -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="光照等级:" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,8,6">
+                            <Slider Value="{Binding Block.LightLevel}" 
+                                    Minimum="0" Maximum="15" Width="120"
+                                    TickFrequency="1" TickPlacement="BottomRight"
+                                    IsSnapToTickEnabled="True"
+                                    ToolTip="方块发出的光照强度(0-15)"/>
+                            <TextBlock Text="{Binding Block.LightLevel}" 
+                                       Style="{StaticResource BodyTextStyle}" 
+                                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </StackPanel>
+                        
+                        <!-- 特殊属性-->
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="特殊属�?" 
+                                   Style="{StaticResource BodyTextStyle}" 
+                                   VerticalAlignment="Top" Margin="0,0,8,0"/>
+                        <StackPanel Grid.Row="2" Grid.Column="3" Margin="0,0,0,6">
+                            <CheckBox Content="透明方块" 
+                                      IsChecked="{Binding Block.IsTransparent}"
+                                      Style="{StaticResource ModernCheckBoxStyle}"
+                                      ToolTip="是否为透明方块"/>
+                            <CheckBox Content="完整方块" 
+                                      IsChecked="{Binding Block.IsFullBlock}"
+                                      Style="{StaticResource ModernCheckBoxStyle}"
+                                      ToolTip="是否为完整的立方体方块"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- 掉落物配置-->
+                <GroupBox Header="掉落物配置" Style="{StaticResource ModernGroupBoxStyle}">
+                    <Grid Margin="0,4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="180"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- 工具栏-->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button Content="添加" 
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Command="{Binding AddDropCommand}"/>
+                            <Button Content="删除" 
+                                    Style="{StaticResource DangerButtonStyle}"
+                                    Command="{Binding RemoveDropCommand}" Margin="4,0,0,0"/>
+                        </StackPanel>
+                        
+                        <!-- 掉落物列表-->
+                        <DataGrid Grid.Row="1" 
+                                  ItemsSource="{Binding Block.Drops}"
+                                  SelectedItem="{Binding SelectedDrop}"
+                                  Style="{StaticResource ModernDataGridStyle}"
+                                  RowStyle="{StaticResource ModernDataGridRowStyle}"
+                                  ColumnHeaderStyle="{StaticResource ModernDataGridColumnHeaderStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="物品ID" Binding="{Binding ItemId}" Width="*"/>
+                                <DataGridTextColumn Header="数量" Binding="{Binding Count}" Width="60"/>
+                                <DataGridTextColumn Header="几率" Binding="{Binding Chance}" Width="60"/>
+                                <DataGridCheckBoxColumn Header="时运" Binding="{Binding AffectedByFortune}" Width="60"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </GroupBox>
+                
+                <!-- 操作按钮 -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,8">
+                    <Button Content="重置" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Command="{Binding ResetCommand}" Margin="0,0,4,0"/>
+                    <Button Content="预览" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Command="{Binding PreviewCommand}" Margin="0,0,4,0"/>
+                    <Button Content="保存" 
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Command="{Binding SaveCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- 分隔线-->
+        <GridSplitter Grid.Column="1" Width="1" HorizontalAlignment="Center" 
+                      Background="{StaticResource BorderBrush}" Cursor="SizeWE"/>
+        
+        <!-- 右侧面板 -->
+        <Grid Grid.Column="2" Background="{StaticResource SecondaryBackgroundBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+            
+            <!-- 纹理预览标题 -->
+            <Border Grid.Row="0" Background="{StaticResource TertiaryBackgroundBrush}" 
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                <TextBlock Text="纹理预览" Style="{StaticResource BodyTextStyle}" 
+                           Margin="12,8"/>
+            </Border>
+            
+            <!-- 纹理预览区域 -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="8">
+                    <!-- 纹理选择 -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- 顶部纹理 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="顶部" 
+                                   Style="{StaticResource BodyTextStyle}" HorizontalAlignment="Center"/>
+                        <Border Grid.Row="1" Grid.Column="0"
+                                Background="{StaticResource BackgroundBrush}" 
+                                BorderBrush="{StaticResource BorderBrush}" 
+                                BorderThickness="1" 
+                                Width="60" Height="60" 
+                                Margin="2">
+                            <Image Source="{Binding Block.Textures.Top}" Stretch="Fill"/>
+                        </Border>
+                        <Button Grid.Row="2" Grid.Column="0" Content="选择" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Command="{Binding SelectTopTextureCommand}" Margin="2"/>
+                        
+                        <!-- 侧面纹理 -->
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="侧面" 
+                                   Style="{StaticResource BodyTextStyle}" HorizontalAlignment="Center"/>
+                        <Border Grid.Row="1" Grid.Column="1"
+                                Background="{StaticResource BackgroundBrush}" 
+                                BorderBrush="{StaticResource BorderBrush}" 
+                                BorderThickness="1" 
+                                Width="60" Height="60" 
+                                Margin="2">
+                            <Image Source="{Binding Block.Textures.Side}" Stretch="Fill"/>
+                        </Border>
+                        <Button Grid.Row="2" Grid.Column="1" Content="选择" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Command="{Binding SelectSideTextureCommand}" Margin="2"/>
+                        
+                        <!-- 底部纹理 -->
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="底部" 
+                                   Style="{StaticResource BodyTextStyle}" HorizontalAlignment="Center"/>
+                        <Border Grid.Row="1" Grid.Column="2"
+                                Background="{StaticResource BackgroundBrush}" 
+                                BorderBrush="{StaticResource BorderBrush}" 
+                                BorderThickness="1" 
+                                Width="60" Height="60" 
+                                Margin="2">
+                            <Image Source="{Binding Block.Textures.Bottom}" Stretch="Fill"/>
+                        </Border>
+                        <Button Grid.Row="2" Grid.Column="2" Content="选择" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Command="{Binding SelectBottomTextureCommand}" Margin="2"/>
+                    </Grid>
+                    
+                    <!-- 纹理操作 -->
+                    <StackPanel Margin="0,8">
+                        <Button Content="导入纹理" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Command="{Binding ImportTextureCommand}" 
+                                HorizontalAlignment="Stretch" Margin="0,2"/>
+                        <Button Content="统一纹理" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Command="{Binding UnifyTexturesCommand}" 
+                                HorizontalAlignment="Stretch" Margin="0,2"
+                                ToolTip="将侧面纹理应用到所有面"/>
+                        <Button Content="重置纹理" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Command="{Binding ResetTexturesCommand}" 
+                                HorizontalAlignment="Stretch" Margin="0,2"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- 3D预览标题 -->
+            <Border Grid.Row="2" Background="{StaticResource TertiaryBackgroundBrush}" 
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1">
+                <TextBlock Text="3D预览" Style="{StaticResource BodyTextStyle}" 
+                           Margin="12,8"/>
+            </Border>
+            
+            <!-- 3D预览区域 -->
+            <Border Grid.Row="3" Background="{StaticResource BackgroundBrush}" 
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="8">
+                <Grid>
+                    <!-- 这里可以放置3D预览控件 -->
+                    <TextBlock Text="3D预览区域" 
+                               Style="{StaticResource SecondaryTextStyle}" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
